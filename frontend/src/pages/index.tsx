@@ -1,0 +1,87 @@
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import AppLayout from '@/components/layout/AppLayout';
+import apiClient from '@/lib/api';
+import { FiArrowRight, FiClock } from 'react-icons/fi';
+import styles from '@/styles/Home.module.css';
+
+export default function Home() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      apiClient.get('/api/posts'),
+      apiClient.get('/api/categories'),
+    ]).then(([p, c]) => {
+      setPosts(p.data);
+      setCategories(c.data);
+    }).finally(() => setLoading(false));
+  }, []);
+
+  const featured = posts[0];
+
+  return (
+    <AppLayout>
+      <div className={styles.page}>
+        <div className={styles.mainCol}>
+          {featured && (
+            <Link href={`/posts/${featured.slug}`} className={styles.hero}>
+              <div className={styles.heroImage}>
+                <img src={featured.featured_image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop'} alt={featured.title} />
+              </div>
+              <div className={styles.heroContent}>
+                <span className={styles.heroBadge}>{featured.category_name || 'Featured'}</span>
+                <h1 className={styles.heroTitle}>{featured.title}</h1>
+                <p className={styles.heroExcerpt}>{featured.excerpt}</p>
+                <div className={styles.heroMeta}>
+                  <span>{featured.author_name}</span>
+                  <span><FiClock size={12} /> {new Date(featured.published_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          <h2 className={styles.sectionTitle}>Latest Posts</h2>
+          {loading ? <p>Loading...</p> : (
+            <div className={styles.grid}>
+              {posts.slice(1).map(post => (
+                <Link key={post.id} href={`/posts/${post.slug}`} className={styles.card}>
+                  <div className={styles.cardImg}>
+                    <img src={post.featured_image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=250&fit=crop'} alt={post.title} />
+                  </div>
+                  <div className={styles.cardBody}>
+                    <span className={styles.cardCat}>{post.category_name}</span>
+                    <h3 className={styles.cardTitle}>{post.title}</h3>
+                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
+                    <div className={styles.cardMeta}>
+                      <span>{post.author_name}</span>
+                      <FiArrowRight size={14} />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+        <aside className={styles.sidebar}>
+          <div className={styles.sideCard}>
+            <h3 className={styles.sideTitle}>Categories</h3>
+            {categories.map(c => (
+              <Link key={c.id} href={`/category/${c.slug}`} className={styles.catLink}>
+                {c.name}
+              </Link>
+            ))}
+          </div>
+          <div className={styles.sideCard}>
+            <h3 className={styles.sideTitle}>Search</h3>
+            <form onSubmit={e => { e.preventDefault(); const q = (e.target as any).q.value; if (q) window.location.href = `/search?q=${q}`; }}>
+              <input name="q" placeholder="Search posts..." className={styles.searchInput} />
+            </form>
+          </div>
+        </aside>
+      </div>
+    </AppLayout>
+  );
+}

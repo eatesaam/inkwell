@@ -1,0 +1,30 @@
+{
+  "name": "inkwell",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 4000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 4000",
+    "seed": "npx tsx src/db/seed.ts"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "better-sqlite3": "^11.0.0",
+    "react-icons": "^5.0.0",
+    "react-quill": "^2.0.0",
+    "recharts": "^2.12.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0"
+  }
+}

@@ -1,0 +1,30 @@
+export const theme = {
+  colors: {
+    primary: '#000000',
+    secondary: '#757575',
+    accent: '#2C2C2C',
+    border: '#E3E3E3',
+    background: '#FFFFFF',
+    surface: '#FAFAFA',
+    textPrimary: '#000000',
+    textSecondary: '#757575',
+    success: '#2E7D32',
+    warning: '#F59E0B',
+    info: '#1976D2',
+    danger: '#DC2626',
+  },
+  gradients: {
+    headerPrimary: 'linear-gradient(135deg, #000000 0%, #2C2C2C 100%)',
+    panelDark: 'linear-gradient(135deg, #1a1a1a 0%, #2C2C2C 100%)',
+    softSurface: 'linear-gradient(135deg, #FAFAFA 0%, #F0F0F0 100%)',
+  },
+  typography: {
+    fontFamily: '"Inter", sans-serif',
+    h1: { fontSize: '24px', fontWeight: 700 },
+    h2: { fontSize: '20px', fontWeight: 600 },
+    body1: { fontSize: '14px', fontWeight: 400 },
+    body2: { fontSize: '12px', fontWeight: 400 },
+    label: { fontSize: '12px', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.05em' },
+  },
+  radius: { sm: '4px', md: '8px', lg: '12px' },
+};

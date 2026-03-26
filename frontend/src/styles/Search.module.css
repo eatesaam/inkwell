@@ -1,0 +1,6 @@
+.searchForm {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 16px;
+}
+.searchIcon { color: var(--color-secondary); flex-shrink: 0; }
+.searchInput { flex: 1; border: none; outline: none; font-size: 16px; background: transparent; }
