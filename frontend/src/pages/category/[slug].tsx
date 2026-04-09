@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AppLayout from '@/components/layout/AppLayout';
+import { format } from 'date-fns';
+import { FiArrowLeft } from 'react-icons/fi';
 import apiClient from '@/lib/api';
-import { FiArrowRight } from 'react-icons/fi';
-import styles from '@/styles/Home.module.css';
+import styles from '@/styles/home.module.css';
 
 export default function CategoryPosts() {
   const router = useRouter();
@@ -16,44 +16,49 @@ export default function CategoryPosts() {
   useEffect(() => {
     if (!slug) return;
     Promise.all([
-      apiClient.get(`/api/categories/${slug}/posts`),
+      apiClient.get(`/api/posts?category=${slug}`),
       apiClient.get('/api/categories'),
-    ]).then(([p, c]) => { setPosts(p.data); setCategories(c.data); }).finally(() => setLoading(false));
+    ]).then(([p, c]) => {
+      setPosts(p.data);
+      setCategories(c.data);
+    }).finally(() => setLoading(false));
   }, [slug]);
 
-  const current = categories.find(c => c.slug === slug);
+  const catName = categories.find(c => c.slug === slug)?.name || slug;
 
   return (
-    <AppLayout>
-      <div className={styles.page}>
-        <div className={styles.mainCol}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{current?.name || slug}</h1>
-          {current?.description && <p style={{ color: '#757575', marginBottom: 24 }}>{current.description}</p>}
-          {loading ? <p>Loading...</p> : posts.length === 0 ? <p style={{ color: '#757575' }}>No posts in this category yet.</p> : (
-            <div className={styles.grid}>
-              {posts.map(post => (
-                <Link key={post.id} href={`/posts/${post.slug}`} className={styles.card}>
-                  <div className={styles.cardImg}><img src={post.featured_image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=250&fit=crop'} alt={post.title} /></div>
-                  <div className={styles.cardBody}>
-                    <span className={styles.cardCat}>{post.category_name}</span>
-                    <h3 className={styles.cardTitle}>{post.title}</h3>
-                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
-                    <div className={styles.cardMeta}><span>{post.author_name}</span><FiArrowRight size={14} /></div>
+    <div>
+      <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-secondary)', marginBottom: 16 }}><FiArrowLeft /> Back</Link>
+      <h1 style={{ fontFamily: 'var(--font-brand)', fontSize: 28, textTransform: 'uppercase', marginBottom: 24 }}>{catName}</h1>
+      {loading ? <p>Loading...</p> : (
+        <div className={styles.layout}>
+          <div className={styles.mainCol}>
+            <div className={styles.postGrid}>
+              {posts.map((post: any) => (
+                <Link href={`/posts/${post.slug}`} key={post.id} className={styles.postCard}>
+                  {post.featured_image && <img src={post.featured_image} alt={post.title} className={styles.postImg} />}
+                  <div className={styles.postBody}>
+                    <div className={styles.meta}>
+                      <span>{post.author_name}</span>
+                      <span className={styles.dot}>·</span>
+                      <span>{post.published_at ? format(new Date(post.published_at), 'MMM d') : ''}</span>
+                    </div>
+                    <h3 className={styles.postTitle}>{post.title}</h3>
+                    <p className={styles.excerptSm}>{post.excerpt}</p>
                   </div>
                 </Link>
               ))}
+              {posts.length === 0 && <p style={{ color: 'var(--color-secondary)' }}>No posts in this category.</p>}
             </div>
-          )}
-        </div>
-        <aside className={styles.sidebar}>
-          <div className={styles.sideCard}>
-            <h3 className={styles.sideTitle}>Categories</h3>
-            {categories.map(c => (
-              <Link key={c.id} href={`/category/${c.slug}`} className={styles.catLink} style={c.slug === slug ? { color: '#000', fontWeight: 600 } : {}}>{c.name}</Link>
-            ))}
           </div>
-        </aside>
-      </div>
-    </AppLayout>
+          <aside className={styles.sideCol}>
+            <h4 className={styles.sideTitle}>Categories</h4>
+            {categories.map((c: any) => (
+              <Link href={`/category/${c.slug}`} key={c.id} className={styles.catLink} style={c.slug === slug ? { fontWeight: 700 } : {}}>{c.name}</Link>
+            ))}
+          </aside>
+        </div>
+      )}
+    </div>
   );
 }

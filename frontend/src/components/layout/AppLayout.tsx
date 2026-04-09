@@ -1,63 +1,48 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiHome, FiGrid, FiSearch, FiSettings, FiMenu, FiX, FiFileText, FiTag, FiUsers } from 'react-icons/fi';
-import styles from './AppLayout.module.css';
+import { FiHome, FiGrid, FiSearch, FiSettings, FiMenu, FiX } from 'react-icons/fi';
+import styles from '@/styles/layout.module.css';
 
-const publicNav = [
+const navItems = [
   { label: 'Home', href: '/', icon: FiHome },
   { label: 'Categories', href: '/category/fashion', icon: FiGrid },
   { label: 'Search', href: '/search', icon: FiSearch },
-];
-const adminNav = [
-  { label: 'Dashboard', href: '/admin', icon: FiSettings },
-  { label: 'Posts', href: '/admin/posts', icon: FiFileText },
-  { label: 'Categories', href: '/admin/categories', icon: FiTag },
-  { label: 'Authors', href: '/admin/authors', icon: FiUsers },
+  { label: 'Admin', href: '/admin/posts', icon: FiSettings },
 ];
 
-export default function AppLayout({ children, isAdmin }: { children: React.ReactNode; isAdmin?: boolean }) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const nav = isAdmin ? adminNav : publicNav;
 
   return (
-    <div className={styles.shell}>
-      <div className={`${styles.sidebar} ${open ? styles.open : ''}`}>
+    <div className={styles.appShell}>
+      <div className={open ? styles.backdropVisible : styles.backdrop} onClick={() => setOpen(false)} />
+      <aside className={`${styles.sidebar} ${open ? styles.sidebarOpen : ''}`}>
         <div className={styles.brand}>
-          <Link href="/" className={styles.brandLink}>
-            <span className={styles.brandName}>Inkwell</span>
-          </Link>
-          <button className={styles.closeBtn} onClick={() => setOpen(false)}><FiX size={20} /></button>
+          <Link href="/"><span className={styles.brandName}>Inkwell</span></Link>
         </div>
         <nav className={styles.nav}>
-          {nav.map(n => (
-            <Link key={n.href} href={n.href} className={`${styles.navItem} ${router.pathname === n.href || (n.href !== '/' && router.pathname.startsWith(n.href)) ? styles.active : ''}`}>
-              <n.icon size={18} /><span>{n.label}</span>
-            </Link>
-          ))}
-        </nav>
-        {!isAdmin && (
-          <div className={styles.navSection}>
-            <div className={styles.navSectionLabel}>Admin</div>
-            {adminNav.map(n => (
-              <Link key={n.href} href={n.href} className={`${styles.navItem} ${router.pathname.startsWith(n.href) ? styles.active : ''}`}>
-                <n.icon size={18} /><span>{n.label}</span>
+          {navItems.map((item) => {
+            const active = router.pathname === item.href || (item.href !== '/' && router.asPath.startsWith(item.href));
+            return (
+              <Link key={item.href} href={item.href} className={`${styles.navItem} ${active ? styles.navItemActive : ''}`} onClick={() => setOpen(false)}>
+                <item.icon className={styles.navIcon} />
+                {item.label}
               </Link>
-            ))}
-          </div>
-        )}
-      </div>
-      {open && <div className={styles.backdrop} onClick={() => setOpen(false)} />}
+            );
+          })}
+        </nav>
+      </aside>
       <div className={styles.main}>
-        <header className={styles.topbar}>
-          <button className={styles.menuBtn} onClick={() => setOpen(true)}><FiMenu size={20} /></button>
-          <Link href="/" className={styles.topBrand}>Inkwell</Link>
-          <div className={styles.topRight}>
-            <Link href="/search" className={styles.topIcon}><FiSearch size={18} /></Link>
-          </div>
-        </header>
-        <main className={styles.content}>{children}</main>
+        <div className={styles.topBar}>
+          <button className={styles.menuBtn} onClick={() => setOpen(!open)}>
+            {open ? <FiX /> : <FiMenu />}
+          </button>
+          <span className={styles.brandName} style={{ fontSize: 20 }}>Inkwell</span>
+          <div style={{ width: 22 }} />
+        </div>
+        <div className={styles.content}>{children}</div>
       </div>
     </div>
   );

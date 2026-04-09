@@ -8,10 +8,10 @@ export const theme = {
     surface: '#FAFAFA',
     textPrimary: '#000000',
     textSecondary: '#757575',
+    textMuted: '#999999',
     success: '#2E7D32',
-    warning: '#F59E0B',
-    info: '#1976D2',
-    danger: '#DC2626',
+    warning: '#F57C00',
+    info: '#1565C0',
   },
   gradients: {
     headerPrimary: 'linear-gradient(135deg, #000000 0%, #2C2C2C 100%)',
@@ -19,12 +19,8 @@ export const theme = {
     softSurface: 'linear-gradient(135deg, #FAFAFA 0%, #F0F0F0 100%)',
   },
   typography: {
-    fontFamily: '"Inter", sans-serif',
-    h1: { fontSize: '24px', fontWeight: 700 },
-    h2: { fontSize: '20px', fontWeight: 600 },
-    body1: { fontSize: '14px', fontWeight: 400 },
-    body2: { fontSize: '12px', fontWeight: 400 },
-    label: { fontSize: '12px', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.05em' },
+    fontFamily: '"Inter", "Helvetica Neue", Arial, sans-serif',
+    brandFont: '"Playfair Display", Georgia, serif',
   },
   radius: { sm: '4px', md: '8px', lg: '12px' },
 };

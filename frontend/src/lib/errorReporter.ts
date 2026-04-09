@@ -12,9 +12,11 @@ function report(message: string, stack?: string) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        app_id: APP_ID, message, stack,
-        url: window.location.href,
-        user_agent: navigator.userAgent,
+        app_id: APP_ID,
+        message,
+        stack: stack || '',
+        url: typeof window !== 'undefined' ? window.location.href : '',
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
       }),
     }).catch(() => {});
   } catch {}
@@ -28,9 +30,9 @@ export function initErrorReporter() {
   window.onunhandledrejection = (e) => {
     report(e.reason?.message || String(e.reason), e.reason?.stack);
   };
-  const orig = console.error;
+  const origError = console.error;
   console.error = (...args: any[]) => {
     report(args.map(String).join(' '));
-    orig.apply(console, args);
+    origError.apply(console, args);
   };
 }
